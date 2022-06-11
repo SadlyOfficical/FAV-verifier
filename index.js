@@ -6,8 +6,6 @@ const Discord = require("discord.js");
 const chalk = require("chalk");
 const moment = require("moment");
 const { BOT_TOKEN, VERIFICATION_CHANNEL, VERIFIED_ROLE, VERIFICATION_MESSAGE } = process.env;
-const ERROR_MESSAGE_TIMEOUT = parseInt(process.env.ERROR_MESSAGE_TIMEOUT);
-const SUCCESS_MESSAGE_TIMEOUT = parseInt(process.env.SUCCESS_MESSAGE_TIMEOUT);
 
 const client = new Discord.Client({
   disableEveryone: true,
@@ -32,13 +30,13 @@ client.on("messageCreate", message => {
     if (!message.channel.permissionsFor(message.guild.me).serialize().ADD_REACTIONS) {
       console.error("The bot doesn't have the permission to add reactions.\nRequired permission: `ADD_REACTIONS`");
       message.channel.send({ content: "The bot doesn't have the permission to add reactions.\nRequired permission: `ADD_REACTIONS`" })
-        .then(m => setTimeout(() => m.delete(), ERROR_MESSAGE_TIMEOUT));
+        .then(m => setTimeout(() => m.delete(), 20000));
       return;
     }
     if (!message.channel.permissionsFor(message.guild.me).serialize().MANAGE_MESSAGES) {
       console.error("The bot doesn't have the permission to delete messages.\nRequired permission: `MANAGE_MESSAGES`");
       message.channel.send({ content: "The bot doesn't have the permission to delete messages.\nRequired permission: `MANAGE_MESSAGES`" })
-        .then(m => setTimeout(() => m.delete(), ERROR_MESSAGE_TIMEOUT));
+        .then(m => setTimeout(() => m.delete(), 20000));
       return;
     }
     const messageRole = message.guild.roles.cache.get(VERIFIED_ROLE) ||
@@ -46,27 +44,27 @@ client.on("messageCreate", message => {
     if (messageRole == null) return console.error('Role ' + VERIFIED_ROLE + ' not found.');
     if (!message.guild.me.permissions.has("MANAGE_ROLES")) {
       message.channel.send({ content: "The bot doesn't have the permission required to assign roles.\nRequired permission: `MANAGE_ROLES`" })
-        .then(m => setTimeout(() => m.delete(), ERROR_MESSAGE_TIMEOUT));
+        .then(m => setTimeout(() => m.delete(), 20000));
       return;
     }
     if (message.guild.me.roles.highest.comparePositionTo(messageRole) < 1) {
       message.channel.send({ content: "The position of this role is higher than the bot's highest role, it cannot be assigned by the bot." })
-        .then(m => setTimeout(() => m.delete(), ERROR_MESSAGE_TIMEOUT));
+        .then(m => setTimeout(() => m.delete(), 20000));
       return;
     }
     if (messageRole.managed == true) {
       message.channel.send({ content: "This is an auto managed role, it cannot be assigned." })
-        .then(m => setTimeout(() => m.delete(), ERROR_MESSAGE_TIMEOUT));
+        .then(m => setTimeout(() => m.delete(), 20000));
       return;
     }
     if (message.member.roles.cache.has(messageRole.id)) return;
-    message.react("✅");
+    message.react("<a:__:938702984655806524>");
     message.member.roles.add(messageRole)
-      .then(() => setTimeout(() => message.delete() ,SUCCESS_MESSAGE_TIMEOUT))
+      .then(() => setTimeout(() => message.delete() ,3000))
       .catch(error => {
       console.error(error);
       message.channel.send({ content: error.stack })
-        .then(m => setTimeout(() => m.delete(), ERROR_MESSAGE_TIMEOUT));
+        .then(m => setTimeout(() => m.delete(), 20000));
     });
   }
 });
